@@ -14,10 +14,10 @@ def detect_names():
 
 
 # Detect single strokes & blocks of 5 and assign labels
-def detect_counts():
+def detect_strokes():
     print("Counting Strokes...")
 
 
-# Using coordinates to assign bounding boxes to detected name
+# Assign bounding boxes to detected name individually using coordinates
 def get_count_for_name():
     print("Counting for each person...")
