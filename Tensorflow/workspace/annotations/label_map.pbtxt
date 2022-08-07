@@ -1,0 +1,8 @@
+item { 
+	name:'Block'
+	id:1
+}
+item { 
+	name:'Single'
+	id:2
+}

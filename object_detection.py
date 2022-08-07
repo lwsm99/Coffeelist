@@ -15,11 +15,6 @@ pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesse
 global names
 
 # Stroke Detection
-CUSTOM_MODEL_NAME = 'my_ssd_mobnet'
-PRETRAINED_MODEL_NAME = 'ssd_mobilenet_v2_fpnlite_640x640_coco17_tpu-8'
-PRETRAINED_MODEL_URL = 'http://download.tensorflow.org/models/object_detection/tf2/20200711/ssd_mobilenet_v2_fpnlite_640x640_coco17_tpu-8.tar.gz'
-TF_RECORD_SCRIPT_NAME = 'generate_tfrecord.py'
-LABEL_MAP_NAME = 'label_map.pbtxt'
 
 
 ### METHODS ###
@@ -68,12 +63,12 @@ def detect_names(image: str):
                     names[0][0], names[0][1], names[0][2], names[0][3], names[0][4] = d[11], d[6], d[7], d[8], d[9]
                     last_el += 1
                 else:
-                    # If box is around the same height, append to previous saved box (First + Last Name)
+                    # If box is around the same height, append to previous saved box (first + last name)
                     if int(names[last_el - 1][2]) - 25 < int(d[7]) < int(names[last_el - 1][2]) + 25:
                         names[last_el - 1][0] += d[11]   # Name
-                        names[last_el - 1][2] = str(max(int(names[last_el - 1][2]), int(d[7])))   # y
-                        names[last_el - 1][3] = str((int(d[6]) + int(d[8])) - int(names[last_el - 1][1]))   # width
-                        names[last_el - 1][4] = str(max(int(names[last_el - 1][4]), int(d[9])))  # height
+                        names[last_el - 1][2] = str(max(int(names[last_el - 1][2]), int(d[7])))   # Y
+                        names[last_el - 1][3] = str((int(d[6]) + int(d[8])) - int(names[last_el - 1][1]))   # Width
+                        names[last_el - 1][4] = str(max(int(names[last_el - 1][4]), int(d[9])))  # Height
                     else:
                         names[last_el][0], names[last_el][1], names[last_el][2], names[last_el][3], names[last_el][4] = d[11], d[6], d[7], d[8], d[9]
                         last_el += 1
