@@ -10,11 +10,8 @@ import re
 
 ### GLOBAL VARIABLES ###
 
-# Name Detection
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 global names
-
-# Stroke Detection
 
 
 ### METHODS ###
@@ -31,12 +28,13 @@ def detect_names(image: str):
     avg_count = 0
     avg_x_start = 0
     avg_x_end = 0
+    avg_buffer = 250
 
     global names
     names = [['0' for _ in range(5)] for _ in range(20)]
     last_el = 0
 
-    # Get average x position for data with a confidence rate of > 66%
+    # Calculate average x position for data with a confidence rate of > 66%
     for x, d in enumerate(data.splitlines()):
         if x != 0:
             d = d.split()
@@ -45,14 +43,14 @@ def detect_names(image: str):
                 avg_count += 1
                 avg_x_start += int(d[6])
                 avg_x_end += int(d[6]) + int(d[8])
-    avg_x_start = (avg_x_start / avg_count) - 250
-    avg_x_end = (avg_x_end / avg_count) + 250
+    avg_x_start = (avg_x_start / avg_count) - avg_buffer
+    avg_x_end = (avg_x_end / avg_count) + avg_buffer
 
-    # Detect Names by looping through data
+    # Detect names by looping through data
     for x, d in enumerate(data.splitlines()):
         if x != 0:
             d = d.split()
-            # Only work with data where text has been detected and text is inbetween average box
+            # Only work with data where text has been detected and text is inside average limit
             if len(d) == 12 and int(d[6]) > avg_x_start and int(d[6]) + int(d[8]) < avg_x_end:
                 x, y, w, h = int(d[6]), int(d[7]), int(d[8]), int(d[9])
                 # Create Bounding Box for Names
