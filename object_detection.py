@@ -31,7 +31,7 @@ def detect_names(image: str):
     avg_buffer = 250
 
     global names
-    names = [['0' for _ in range(5)] for _ in range(20)]
+    names = [['0' for _ in range(5)] for _ in range(50)]
     last_el = 0
 
     # Calculate average x position for data with a confidence rate of > 66%
