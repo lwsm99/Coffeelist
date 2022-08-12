@@ -1,5 +1,5 @@
 # Main Script which initializes the app
-from object_detection import *
+from detect_objects import *
 
 # Initialize app
 if __name__ == '__main__':
