@@ -19,7 +19,6 @@ matplotlib.use('TkAgg')
 
 ### GLOBAL VARIABLES ###
 
-global names
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 configs = config_util.get_configs_from_pipeline_file('Tensorflow/workspace/models/my_ssd_mobnet/pipeline.config')
@@ -45,7 +44,6 @@ def detect_names(image: str):
     avg_x_end = 0
     avg_buffer = 250
 
-    global names
     names = [['0' for _ in range(5)] for _ in range(50)]
     last_el = 0
 
@@ -93,20 +91,23 @@ def detect_names(image: str):
         if n[0] == '0':
             del names[x:len(names)]
 
-    print(np.matrix(names))
-
     # TODO: Cleanup random inputs that aren't names (When x is >= a detected stroke)
 
-    # Show Image for testing purposes
-    img = cv2.resize(img, (500, 666))
-    cv2.imshow('Result', img)
-    cv2.waitKey(0)
+    # DEBUG
+    # img = cv2.resize(img, (500, 666))
+    # cv2.imshow('Result', img)
+    # cv2.waitKey(0)
+
+    # print(np.matrix(names))
+
+    return names
 
 
 # Detect single strokes & blocks of 5 and assign labels
 def detect_strokes(image: str):
     img = cv2.imread(image)
     image_np = np.array(img)
+    img_h, img_w, _ = img.shape
 
     input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
     detections = detect_fn(input_tensor)
@@ -129,17 +130,39 @@ def detect_strokes(image: str):
         detections['detection_scores'],
         category_index,
         use_normalized_coordinates=True,
-        max_boxes_to_draw=5,
-        min_score_thresh=.8,
+        max_boxes_to_draw=1000,
+        min_score_thresh=.3,
         agnostic_mode=False)
 
-    # Show Image for testing purposes
-    image_np_with_detections = cv2.resize(image_np_with_detections, (500, 666))
+    objects = [['0' for _ in range(5)] for _ in range(len(detections['detection_classes']))]
+
+    for i in range(len(detections['detection_classes'])):
+        # Set name for every object
+        if detections['detection_classes'][i] == 0:
+            objects[i][0] = "Block"
+        else:
+            objects[i][0] = "Single"
+
+        # Set x, y, w & h for every object
+        objects[i][1] = str(round(detections['detection_boxes'][i][1] * img_w))   # x
+        objects[i][2] = str(round(detections['detection_boxes'][i][0] * img_h))   # y
+        objects[i][3] = str(round(detections['detection_boxes'][i][3] * img_w - int(objects[i][1])))  # w
+        objects[i][4] = str(round(detections['detection_boxes'][i][2] * img_h - int(objects[i][2])))  # h
+
+    # DEBUG
+    image_np_with_detections = cv2.resize(image_np_with_detections, (750, 1000))
     cv2.imshow('Result', image_np_with_detections)
     cv2.waitKey(0)
-
     # plt.imshow(image_np_with_detections)
     # plt.show()
+    # print(np.matrix(objects))
+
+    return objects
+
+
+# Assign bounding boxes to detected name individually using coordinates
+def get_count_for_name():
+    print("Counting for each person...")
 
 
 @tf.function
@@ -148,8 +171,3 @@ def detect_fn(image):
     prediction_dict = detection_model.predict(image, shapes)
     detections = detection_model.postprocess(prediction_dict, shapes)
     return detections
-
-
-# Assign bounding boxes to detected name individually using coordinates
-def get_count_for_name():
-    print("Counting for each person...")
