@@ -14,8 +14,8 @@ from object_detection.utils import config_util
 import matplotlib
 from matplotlib import pyplot as plt
 import tkinter
-matplotlib.use('TkAgg')
 
+matplotlib.use('TkAgg')
 
 ### GLOBAL VARIABLES ###
 
@@ -32,7 +32,6 @@ category_index = label_map_util.create_category_index_from_labelmap('Tensorflow/
 
 # Detect names
 def detect_names(image: str):
-
     # Variables
     img = cv2.imread(image)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -44,8 +43,8 @@ def detect_names(image: str):
     avg_x_end = 0
     avg_buffer = 250
 
-    names = [['0' for _ in range(5)] for _ in range(50)]
-    last_el = 0
+    names = [['0' for _ in range(6)] for _ in range(50)]
+    last = 0
 
     # Calculate average x position for data with a confidence rate of > 66%
     for x, d in enumerate(data.splitlines()):
@@ -69,20 +68,22 @@ def detect_names(image: str):
                 # Create Bounding Box for Names
                 cv2.rectangle(img, (x, y), (w + x, h + y), (0, 0, 255), 3)
 
-                if last_el == 0:
-                    # Name, x, y, width, height
-                    names[0][0], names[0][1], names[0][2], names[0][3], names[0][4] = d[11], d[6], d[7], d[8], d[9]
-                    last_el += 1
+                if last == 0:
+                    # Name, x, y, width, height, stroke count (= 0)
+                    names[0][0], names[0][1], names[0][2], names[0][3], names[0][4], names[0][5] = d[11], d[6], d[7], d[
+                        8], d[9], str(0)
+                    last += 1
                 else:
                     # If box is around the same height, append to previous saved box (first + last name)
-                    if int(names[last_el - 1][2]) - 25 < int(d[7]) < int(names[last_el - 1][2]) + 25:
-                        names[last_el - 1][0] += d[11]   # Name
-                        names[last_el - 1][2] = str(max(int(names[last_el - 1][2]), int(d[7])))   # Y
-                        names[last_el - 1][3] = str((int(d[6]) + int(d[8])) - int(names[last_el - 1][1]))   # Width
-                        names[last_el - 1][4] = str(max(int(names[last_el - 1][4]), int(d[9])))  # Height
+                    if int(names[last - 1][2]) - 25 < int(d[7]) < int(names[last - 1][2]) + 25:
+                        names[last - 1][0] += d[11]  # Name
+                        names[last - 1][2] = str(max(int(names[last - 1][2]), int(d[7])))  # Y
+                        names[last - 1][3] = str((int(d[6]) + int(d[8])) - int(names[last - 1][1]))  # Width
+                        names[last - 1][4] = str(max(int(names[last - 1][4]), int(d[9])))  # Height
                     else:
-                        names[last_el][0], names[last_el][1], names[last_el][2], names[last_el][3], names[last_el][4] = d[11], d[6], d[7], d[8], d[9]
-                        last_el += 1
+                        names[last][0], names[last][1], names[last][2], names[last][3], names[last][4], names[last][5] = \
+                        d[11], d[6], d[7], d[8], d[9], 0
+                        last += 1
 
     for x, n in enumerate(names):
         # Add Spaces inbetween names
@@ -108,6 +109,7 @@ def detect_strokes(image: str):
     img = cv2.imread(image)
     image_np = np.array(img)
     img_h, img_w, _ = img.shape
+    min_accuracy = .3
 
     input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
     detections = detect_fn(input_tensor)
@@ -131,23 +133,29 @@ def detect_strokes(image: str):
         category_index,
         use_normalized_coordinates=True,
         max_boxes_to_draw=1000,
-        min_score_thresh=.3,
+        min_score_thresh=min_accuracy,
         agnostic_mode=False)
 
     objects = [['0' for _ in range(5)] for _ in range(len(detections['detection_classes']))]
 
     for i in range(len(detections['detection_classes'])):
         # Set name for every object
-        if detections['detection_classes'][i] == 0:
-            objects[i][0] = "Block"
-        else:
-            objects[i][0] = "Single"
+        if detections['detection_scores'][i] > min_accuracy:
+            if detections['detection_classes'][i] == 0:
+                objects[i][0] = "Block"
+            else:
+                objects[i][0] = "Single"
 
-        # Set x, y, w & h for every object
-        objects[i][1] = str(round(detections['detection_boxes'][i][1] * img_w))   # x
-        objects[i][2] = str(round(detections['detection_boxes'][i][0] * img_h))   # y
-        objects[i][3] = str(round(detections['detection_boxes'][i][3] * img_w - int(objects[i][1])))  # w
-        objects[i][4] = str(round(detections['detection_boxes'][i][2] * img_h - int(objects[i][2])))  # h
+            # Set x, y, w & h for every object
+            objects[i][1] = str(round(detections['detection_boxes'][i][1] * img_w))  # x
+            objects[i][2] = str(round(detections['detection_boxes'][i][0] * img_h))  # y
+            objects[i][3] = str(round(detections['detection_boxes'][i][3] * img_w - int(objects[i][1])))  # w
+            objects[i][4] = str(round(detections['detection_boxes'][i][2] * img_h - int(objects[i][2])))  # h
+
+    # Delete empty list elements
+    for x, n in enumerate(objects):
+        if n[0] == '0':
+            del objects[x:len(objects)]
 
     # DEBUG
     image_np_with_detections = cv2.resize(image_np_with_detections, (750, 1000))
@@ -160,9 +168,23 @@ def detect_strokes(image: str):
     return objects
 
 
-# Assign bounding boxes to detected name individually using coordinates
-def get_count_for_name():
-    print("Counting for each person...")
+# Assign objects to detected name individually using the position of objects
+def get_count_for_name(objects, names):
+    buffer = 75
+
+    for name in names:
+        name_y_bot = int(name[2]) - buffer
+        name_y_top = int(name[2]) + int(name[4]) + buffer
+        name_x_right = int(name[1]) + int(name[3])
+
+        for obj in objects:
+            if int(obj[2]) > name_y_bot and (int(obj[2]) + int(obj[4])) < name_y_top and int(obj[1]) > name_x_right:
+                if obj[0] == 'Block':
+                    name[5] = str(int(name[5]) + 5)
+                elif obj[0] == 'Single':
+                    name[5] = str(int(name[5]) + 1)
+                obj[0] = '-'
+    return names
 
 
 @tf.function
