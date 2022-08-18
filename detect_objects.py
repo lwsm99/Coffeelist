@@ -1,24 +1,23 @@
 # Object detection script which detects names, counts strokes and labels them (1 or 5), assigns the bounding boxes to names and then counts them individually
 
 ### IMPORTS ###
-import os
-import cv2
-import pytesseract
-import numpy as np
-import re
-import tensorflow as tf
-from object_detection.utils import label_map_util
 from object_detection.utils import visualization_utils as viz_utils
 from object_detection.builders import model_builder
+from object_detection.utils import label_map_util
 from object_detection.utils import config_util
-import matplotlib
 from matplotlib import pyplot as plt
+import tensorflow as tf
+import numpy as np
+import pytesseract
+import matplotlib
 import tkinter
+import cv2
+import os
+import re
 
 matplotlib.use('TkAgg')
 
 ### GLOBAL VARIABLES ###
-
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
 configs = config_util.get_configs_from_pipeline_file('Tensorflow/workspace/models/my_ssd_mobnet/pipeline.config')

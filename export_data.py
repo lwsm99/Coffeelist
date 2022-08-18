@@ -1,14 +1,15 @@
 # Data Export  script which exports the data into an Excel sheet using pandas
 # https://pandas.pydata.org/docs/
 
-### IMPORTS ###
+import pandas as pd
+import openpyxl
 
-
-### GLOBAL VARIABLES ###
-
-
-### METHODS ###
 
 # Export into Excel
-def export_data():
-    print("Exporting data...")
+def export_data(names):
+    file_name = 'Coffeelist.xlsx'
+
+    df = pd.DataFrame(names, columns=['Names', 'x', 'y', 'width', 'height', 'Coffee count'])
+    df = df[['Names', 'Coffee count']]
+
+    df.to_excel(file_name)
