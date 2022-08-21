@@ -5,7 +5,7 @@ import numpy as np
 
 # Initialize app
 if __name__ == '__main__':
-    img = 'Tensorflow/workspace/images/collectedimages/tables/CL_DATA_060822 (2).jpeg'
+    img = 'Tensorflow/workspace/images/collectedimages/tables/CL_DATA_060822 (1).jpeg'
 
     objects = detect_strokes(img)
     names = detect_names(img)
