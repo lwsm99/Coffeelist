@@ -3,6 +3,11 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet/export/saved_model/assets" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet/tfliteexport/saved_model/assets" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet/tfjsexport" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet_v2" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet_v3" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
