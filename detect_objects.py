@@ -21,10 +21,10 @@ matplotlib.use('TkAgg')
 ### GLOBAL VARIABLES ###
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
-configs = config_util.get_configs_from_pipeline_file('Tensorflow/workspace/models/my_ssd_mobnet_v4/pipeline.config')
+configs = config_util.get_configs_from_pipeline_file('Tensorflow/workspace/models/my_ssd_mobnet_v6/pipeline.config')
 detection_model = model_builder.build(model_config=configs['model'], is_training=False)
 ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
-ckpt.restore('Tensorflow/workspace/models/my_ssd_mobnet_v4/ckpt-3').expect_partial()
+ckpt.restore('Tensorflow/workspace/models/my_ssd_mobnet_v6/ckpt-21').expect_partial()
 category_index = label_map_util.create_category_index_from_labelmap('Tensorflow/workspace/annotations/label_map.pbtxt')
 
 
