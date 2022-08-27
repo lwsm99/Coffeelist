@@ -3,6 +3,18 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet/export/saved_model/assets" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet/tfliteexport/saved_model/assets" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet/tfjsexport" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet_v2" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet_v3" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/models/research/slim/slim.egg-info" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/models/research/build" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/models/research/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/models/research/object_detection.egg-info" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet_v6/export" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet_v6/tfjsexport" />
+      <excludeFolder url="file://$MODULE_DIR$/Tensorflow/workspace/models/my_ssd_mobnet_v6/tfliteexport" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

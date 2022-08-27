@@ -17,13 +17,14 @@ import re
 
 matplotlib.use('TkAgg')
 
+
 ### GLOBAL VARIABLES ###
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 
-configs = config_util.get_configs_from_pipeline_file('Tensorflow/workspace/models/my_ssd_mobnet/pipeline.config')
+configs = config_util.get_configs_from_pipeline_file('Tensorflow/workspace/models/my_ssd_mobnet_v6/pipeline.config')
 detection_model = model_builder.build(model_config=configs['model'], is_training=False)
 ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
-ckpt.restore('Tensorflow/workspace/models/my_ssd_mobnet/ckpt-7').expect_partial()
+ckpt.restore('Tensorflow/workspace/models/my_ssd_mobnet_v6/ckpt-21').expect_partial()
 category_index = label_map_util.create_category_index_from_labelmap('Tensorflow/workspace/annotations/label_map.pbtxt')
 
 
@@ -80,8 +81,7 @@ def detect_names(image: str):
                         names[last - 1][3] = str((int(d[6]) + int(d[8])) - int(names[last - 1][1]))  # Width
                         names[last - 1][4] = str(max(int(names[last - 1][4]), int(d[9])))  # Height
                     else:
-                        names[last][0], names[last][1], names[last][2], names[last][3], names[last][4], names[last][5] = \
-                        d[11], d[6], d[7], d[8], d[9], 0
+                        names[last][0], names[last][1], names[last][2], names[last][3], names[last][4], names[last][5] = d[11], d[6], d[7], d[8], d[9], 0
                         last += 1
 
     for x, n in enumerate(names):
@@ -108,7 +108,7 @@ def detect_strokes(image: str):
     img = cv2.imread(image)
     image_np = np.array(img)
     img_h, img_w, _ = img.shape
-    min_accuracy = .3
+    min_accuracy = .25
 
     input_tensor = tf.convert_to_tensor(np.expand_dims(image_np, 0), dtype=tf.float32)
     detections = detect_fn(input_tensor)
@@ -135,6 +135,7 @@ def detect_strokes(image: str):
         min_score_thresh=min_accuracy,
         agnostic_mode=False)
 
+    # Create list for every object with name, x, y, width & height
     objects = [['0' for _ in range(5)] for _ in range(len(detections['detection_classes']))]
 
     for i in range(len(detections['detection_classes'])):

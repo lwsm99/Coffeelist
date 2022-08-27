@@ -1,5 +1,4 @@
 # Data Export  script which exports the data into an Excel sheet using pandas
-# https://pandas.pydata.org/docs/
 
 import pandas as pd
 import openpyxl
