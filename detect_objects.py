@@ -55,8 +55,9 @@ def detect_names(image: str):
                 avg_count += 1
                 avg_x_start += int(d[6])
                 avg_x_end += int(d[6]) + int(d[8])
-    avg_x_start = (avg_x_start / avg_count) - avg_buffer
-    avg_x_end = (avg_x_end / avg_count) + avg_buffer
+    if avg_count > 0:
+        avg_x_start = (avg_x_start / avg_count) - avg_buffer
+        avg_x_end = (avg_x_end / avg_count) + avg_buffer
 
     # Detect names by looping through data
     for x, d in enumerate(data.splitlines()):

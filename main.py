@@ -7,9 +7,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.clock import Clock
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.lang import Builder
 import numpy as np
-import time
 from detect_objects import *
 from export_data import *
 
@@ -45,34 +43,53 @@ class ConfirmScreen(Screen):
 
     def __init__(self, **kwargs):
         super(ConfirmScreen, self).__init__(**kwargs)
-        layout = BoxLayout(orientation='vertical')
-        button_layout = BoxLayout(orientation='horizontal')
+        self.layout = BoxLayout(orientation='vertical')
+        self.button_layout = BoxLayout(orientation='horizontal')
 
         # Image object
         self.image = Image(source='Coffeelist.png')
         Clock.schedule_interval(lambda dt: self.image.reload(), 0.2)
 
         # Confirm button object
-        confirm_btn = Button(text='Confirm')
-        confirm_btn.size_hint = (.25, .2)
-        confirm_btn.pos_hint = {'x': .25, 'y': .75}
-        confirm_btn.bind(on_press=self.switch_photo_screen)
+        self.confirm_btn = Button(text='Confirm')
+        self.confirm_btn.size_hint = (.25, .2)
+        self.confirm_btn.pos_hint = {'x': .25, 'y': .75}
+        self.confirm_btn.bind(on_press=lambda widget: self.start_export())
 
-        # Cancel button object
-        cancel_btn = Button(text='Cancel')
-        cancel_btn.size_hint = (.25, .2)
-        cancel_btn.pos_hint = {'x': .25, 'y': .75}
-        cancel_btn.bind(on_press=self.switch_photo_screen)
+        # Retry button object
+        self.retry_btn = Button(text='Retry')
+        self.retry_btn.size_hint = (.25, .2)
+        self.retry_btn.pos_hint = {'x': .25, 'y': .75}
+        self.retry_btn.bind(on_press=self.switch_photo_screen)
+
+        # Success text object
+        self.success_label = Label()
+        self.success_label.text = 'Your Coffeelist has successfully been exported!'
+        self.success_label.size_hint = (.25, .2)
+        self.success_label.pos_hint = {'x': .25, 'y': .75}
 
         # Add to layout
-        layout.add_widget(self.image)
-        button_layout.add_widget(confirm_btn)
-        button_layout.add_widget(cancel_btn)
-        layout.add_widget(button_layout)
-        self.add_widget(layout)
+        self.layout.add_widget(self.image)
+        self.button_layout.add_widget(self.confirm_btn)
+        self.button_layout.add_widget(self.retry_btn)
+        self.layout.add_widget(self.button_layout)
+        self.add_widget(self.layout)
 
     def switch_photo_screen(self, *args):
         self.manager.current = 'camera'
+
+    def start_export(self, *args):
+        export_to_table('Coffeelist.png')
+        self.layout.add_widget(self.success_label)
+        self.button_layout.remove_widget(self.confirm_btn)
+
+
+def export_to_table(img):
+    objects = detect_strokes(img)
+    names = detect_names(img)
+    names = get_count_for_name(objects, names)
+    export_data(names)
+    print(np.matrix(names))
 
 
 class MainApp(App):
@@ -86,12 +103,4 @@ class MainApp(App):
 
 # Initialize App
 if __name__ == '__main__':
-    img = 'Tensorflow/workspace/images/collectedimages/tables/CL_DATA_060822 (1).jpeg'
     MainApp().run()
-
-    #     objects = detect_strokes(img)
-    #     names = detect_names(img)
-    #     names = get_count_for_name(objects, names)
-    #     export_data(names)
-    #
-    #     print(np.matrix(names))
