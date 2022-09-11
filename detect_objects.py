@@ -15,8 +15,6 @@ import cv2
 import os
 import re
 
-matplotlib.use('TkAgg')
-
 
 ### GLOBAL VARIABLES ###
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
@@ -26,6 +24,8 @@ detection_model = model_builder.build(model_config=configs['model'], is_training
 ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
 ckpt.restore('Tensorflow/workspace/models/my_ssd_mobnet_v6/ckpt-21').expect_partial()
 category_index = label_map_util.create_category_index_from_labelmap('Tensorflow/workspace/annotations/label_map.pbtxt')
+
+matplotlib.use('TkAgg')
 
 
 ### METHODS ###

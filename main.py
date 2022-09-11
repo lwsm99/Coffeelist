@@ -1,4 +1,6 @@
 # Main Script which initializes the app
+
+### IMPORTS ###
 from kivy.app import App
 from kivy.uix.label import Label
 from kivy.uix.camera import Camera
@@ -12,6 +14,9 @@ from detect_objects import *
 from export_data import *
 
 
+### METHODS ###
+
+# Camera screen which allows the user to take a photo
 class CameraScreen(Screen):
 
     def __init__(self, **kwargs):
@@ -39,6 +44,7 @@ class CameraScreen(Screen):
         self.manager.current = 'confirm'
 
 
+# Confirmation screen which allows the user to export the image to an Excel sheet or retry
 class ConfirmScreen(Screen):
 
     def __init__(self, **kwargs):
@@ -84,6 +90,7 @@ class ConfirmScreen(Screen):
         self.button_layout.remove_widget(self.confirm_btn)
 
 
+# Export the image to an Excel table using Object Detection
 def export_to_table(img):
     objects = detect_strokes(img)
     names = detect_names(img)
@@ -92,6 +99,7 @@ def export_to_table(img):
     print(np.matrix(names))
 
 
+# Build the App
 class MainApp(App):
     def build(self):
         sm = ScreenManager()
