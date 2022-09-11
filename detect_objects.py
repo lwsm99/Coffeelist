@@ -15,8 +15,6 @@ import cv2
 import os
 import re
 
-matplotlib.use('TkAgg')
-
 
 ### GLOBAL VARIABLES ###
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
@@ -26,6 +24,8 @@ detection_model = model_builder.build(model_config=configs['model'], is_training
 ckpt = tf.compat.v2.train.Checkpoint(model=detection_model)
 ckpt.restore('Tensorflow/workspace/models/my_ssd_mobnet_v6/ckpt-21').expect_partial()
 category_index = label_map_util.create_category_index_from_labelmap('Tensorflow/workspace/annotations/label_map.pbtxt')
+
+matplotlib.use('TkAgg')
 
 
 ### METHODS ###
@@ -55,8 +55,9 @@ def detect_names(image: str):
                 avg_count += 1
                 avg_x_start += int(d[6])
                 avg_x_end += int(d[6]) + int(d[8])
-    avg_x_start = (avg_x_start / avg_count) - avg_buffer
-    avg_x_end = (avg_x_end / avg_count) + avg_buffer
+    if avg_count > 0:
+        avg_x_start = (avg_x_start / avg_count) - avg_buffer
+        avg_x_end = (avg_x_end / avg_count) + avg_buffer
 
     # Detect names by looping through data
     for x, d in enumerate(data.splitlines()):
