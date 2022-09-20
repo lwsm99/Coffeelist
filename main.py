@@ -30,8 +30,8 @@ class CameraScreen(Screen):
 
         # Take photo button object
         button = Button(text='Take Photo')
-        button.size_hint = (.5, .2)
-        button.pos_hint = {'x': .25, 'y': .75}
+        button.size_hint = (.75, .2)
+        button.pos_hint = {'x': .125, 'y': .75}
         button.bind(on_press=self.take_photo)
 
         # Add to layout
@@ -86,8 +86,7 @@ class ConfirmScreen(Screen):
 
     def start_export(self, *args):
         export_to_table('Coffeelist.png')
-        self.layout.add_widget(self.success_label)
-        self.button_layout.remove_widget(self.confirm_btn)
+        self.switch_photo_screen()
 
 
 # Export the image to an Excel table using Object Detection
@@ -96,7 +95,9 @@ def export_to_table(img):
     names = detect_names(img)
     names = get_count_for_name(objects, names)
     export_data(names)
-    print(np.matrix(names))
+
+    # DEBUG
+    # print(np.matrix(names))
 
 
 # Build the App

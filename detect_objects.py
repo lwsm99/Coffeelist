@@ -159,9 +159,9 @@ def detect_strokes(image: str):
             del objects[x:len(objects)]
 
     # DEBUG
-    image_np_with_detections = cv2.resize(image_np_with_detections, (750, 1000))
-    cv2.imshow('Result', image_np_with_detections)
-    cv2.waitKey(0)
+    # image_np_with_detections = cv2.resize(image_np_with_detections, (750, 1000))
+    # cv2.imshow('Result', image_np_with_detections)
+    # cv2.waitKey(0)
     # plt.imshow(image_np_with_detections)
     # plt.show()
     # print(np.matrix(objects))
